@@ -1,0 +1,98 @@
+#navigation {
+    margin-top: 1050px;
+    z-index: 6;
+}
+
+.background {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -2; 
+}
+
+.grid {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;   
+}
+
+.big-grid {
+    position: fixed;              
+    top: 0;
+    left: 50%;                   
+    transform: translateX(-50%);  
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    grid-auto-rows: 0;
+    gap: 0;
+    width: 1440px;
+    margin: 0 auto;
+    align-items: start;
+    z-index: 0;
+    grid-template-areas:
+        "a1 b1 c1 d1 e1 f1 g1 h1 i1 j1 k1 l1 "
+        "a2 b2 c2 d2 e2 f2 g2 h2 i2 j2 k2 l2 "
+        "a3 b3 c3 d3 e3 f3 g3 h3 i3 j3 k3 l3 "
+        "a4 b4 c4 d4 e4 f4 g4 h4 i4 j4 k4 l4 "
+        "a5 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5 l5 "
+        "a6 b6 c6 d6 e6 f6 g6 h6 i6 j6 k6 l6 "
+        "a7 b7 c7 d7 e7 f7 g7 h7 i7 j7 k7 l7 "
+        "a8 b8 c8 d8 e8 f8 g8 h8 i8 j8 k8 l8 "
+        "a9 b9 c9 d9 e9 f9 g9 h9 i9 j9 k9 l9 "
+        "a10 b10 c10 d10 e10 f10 g10 h10 i10 j10 k10 l10 "
+    ;
+}
+
+#foor-N { grid-area: e6; }
+#foor-E { grid-area: g5; }
+#foor-W { grid-area: g7; }
+#foor-S { grid-area: l10; }
+
+.wrapper {
+    display: grid;
+    grid-template-rows: repeat(3, 35px);
+    justify-items: center;
+    align-items: center;
+    position: relative;
+}
+
+.rectangle {
+    position: absolute;
+    height: 120px;
+    width: 70px;
+    border-radius: 15%;
+    background: #111; 
+    z-index: 0;
+}
+
+
+.lamp[data-color="punane"] {
+    background-color: #ff0000;
+}
+
+.lamp[data-color="kollane"] {
+    background-color: #f2ff00;
+}
+
+.lamp[data-color="roheline"] {
+    background-color: #22ff00;;
+}
+
+.lamp {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    z-index: 1;
+    background: #111;             
+    opacity: 0.4;                 
+    transition: 0.2s;
+    z-index: 10;
+}
+
+.lamp.on {
+    opacity: 1;
+}

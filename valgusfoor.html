@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="foorlogic.js" defer></script>
+    <script src="fetch.js" defer></script>
+    <script src="navigation.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body onload="algus()">
+    <img id="intersectionImg" src="crossingsprites/default.png" class="background" alt="ristmik" width="1440", height="1050">
+    <img src="crossingsprites/grid.png" class="grid" alt="ristmik" width="1440", height="1050">
+
+    <div id="navigation">
+        <button id="intersection1" data-img="crossingsprites/top-left.png">Ristmik 1</button>
+        <button id="intersection2" data-img="crossingsprites/top-right.png">Ristmik 2</button>
+        <button id="intersection3" data-img="crossingsprites/bottom-right.png">Ristmik 3</button>
+        <button id="intersection4" data-img="crossingsprites/bottom-left.png">Ristmik 4</button>
+    </div>
+
+    <div id="kiht1">Kellaaja koht</div>
+    <div id="kiht2">Fooritsükli andmete koht</div>
+    <div id="kiht3">Etapi koht</div>
+
+    <div class="big-grid">
+        <div class="wrapper" id="foor-N">
+            <div class="rectangle"></div>
+            <div class="lamp" data-color="punane"></div>
+            <div class="lamp" data-color="kollane"></div>
+            <div class="lamp" data-color="roheline"></div>
+        </div>
+
+        <div class="wrapper" id="foor-E">
+            <div class="rectangle"></div>
+            <div class="lamp" data-color="punane"></div>
+            <div class="lamp" data-color="kollane"></div>
+            <div class="lamp" data-color="roheline"></div>
+        </div>
+
+        <div class="wrapper" id="foor-S">
+            <div class="rectangle"></div>
+            <div class="lamp" data-color="punane"></div>
+            <div class="lamp" data-color="kollane"></div>
+            <div class="lamp" data-color="roheline"></div>
+        </div>
+
+        <div class="wrapper" id="foor-W">
+            <div class="rectangle"></div>
+            <div class="lamp" data-color="punane"></div>
+            <div class="lamp" data-color="kollane"></div>
+            <div class="lamp" data-color="roheline"></div>
+        </div>
+
+    </div>
+    <canvas id="c1" width="200" height="400"></canvas>
+</body>
+</html>
