@@ -6,20 +6,31 @@ let time = 0;
 let messages = [];
 
 function updateGridAreasCSSVar(data) {
-    console.log("GRID VAR INPUT:", data);
+  console.log("GRID VAR INPUT:", data);
 
-    const root = document.documentElement;
+  const root = document.documentElement;
 
-    data.forEach(item => {
-        if (!item.CardinalDirection || !item.Tile) return;
+  const updated = { N: false, E: false, S: false, W: false };
 
-        switch (item.CardinalDirection) {
-            case "N": root.style.setProperty('--grid-N', item.Tile); break;
-            case "E": root.style.setProperty('--grid-E', item.Tile); break;
-            case "S": root.style.setProperty('--grid-S', item.Tile); break;
-            case "W": root.style.setProperty('--grid-W', item.Tile); break;
-        }
-    });
+  data.forEach(item => {
+      if (!item.CardinalDirection || !item.Tile) return;
+
+      updated[item.CardinalDirection] = true;
+
+      switch (item.CardinalDirection) {
+          case "N": root.style.setProperty('--grid-N', item.Tile); break;
+          case "E": root.style.setProperty('--grid-E', item.Tile); break;
+          case "S": root.style.setProperty('--grid-S', item.Tile); break;
+          case "W": root.style.setProperty('--grid-W', item.Tile); break;
+      }
+  });
+
+  const fallbackTile = "1 / 1";
+
+  if (!updated.N) root.style.setProperty('--grid-N', fallbackTile);
+  if (!updated.E) root.style.setProperty('--grid-E', fallbackTile);
+  if (!updated.S) root.style.setProperty('--grid-S', fallbackTile);
+  if (!updated.W) root.style.setProperty('--grid-W', fallbackTile);
 }
 
 read(feIntersectionId).then(returnData => {
