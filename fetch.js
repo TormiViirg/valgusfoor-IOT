@@ -1,8 +1,32 @@
-const apiLink = "https://script.google.com/macros/s/AKfycbwa8_XNQIsyBdKUePjh6k2dhiJgCkeR02cYKLanzdP7gDUxvz17T6vxs7OJ-Wi2Idd7ZA/exec"
+const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgisa7k5EiiwceV6rdwYlQvDekaUzkpwMPTh_0BWt6iGzbY/exec"
+
 let lightData = [];
 let success = false;
 let time = 0;
 let messages = [];
+
+function updateGridAreasCSSVar(data) {
+    console.log("GRID VAR INPUT:", data);
+
+    const root = document.documentElement;
+
+    data.forEach(item => {
+        if (!item.CardinalDirection || !item.Tile) return;
+
+        switch (item.CardinalDirection) {
+            case "N": root.style.setProperty('--grid-N', item.Tile); break;
+            case "E": root.style.setProperty('--grid-E', item.Tile); break;
+            case "S": root.style.setProperty('--grid-S', item.Tile); break;
+            case "W": root.style.setProperty('--grid-W', item.Tile); break;
+        }
+    });
+}
+
+read(feIntersectionId).then(returnData => {
+  if (returnData?.data) {
+    updateGridAreasCSSVar(returnData.data);
+  }
+});
 
 
 async function fetchData(url, onSuccess = null, onError = null) {
@@ -35,22 +59,24 @@ async function fetchData(url, onSuccess = null, onError = null) {
 }
 
 function read(feIntersectionId) {
-    action = "read"
-    intersectionID = feIntersectionId
-    let url = apiLink+"?action="+action+"&intersectionID="+intersectionID;
+    const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
 
-    fetchData(url)
-    .then(returnData => {
-        if (!returnData) return;
-        const { data, success, time, messages } = returnData;
-        console.log(success, time, messages, data);
+    return fetchData(url).then(returnData => {
+        if (!returnData) return null;
+        console.log("API:", returnData);
         return returnData;
-    })
+    });
 }
 
-async function main(feIntersectionId) {
-  while (true) {
-    read(feIntersectionId);
-    await new Promise(resolve => setTimeout(resolve, 10_000));
-  }
+async function main() {
+    while (true) {
+        if (window.feIntersectionId !== undefined) {
+            read(window.feIntersectionId).then(returnData => {
+                if (returnData?.data) updateGridAreasCSSVar(returnData.data);
+            });
+        }
+        await new Promise(resolve => setTimeout(resolve, 10_000));
+    }
 }
+
+main();

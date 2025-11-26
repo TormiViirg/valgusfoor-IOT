@@ -47,10 +47,11 @@
     ;
 }
 
-#foor-N { grid-area: e6; }
-#foor-E { grid-area: g5; }
-#foor-W { grid-area: g7; }
-#foor-S { grid-area: l10; }
+#foor-N { grid-area: var(--grid-N); }
+#foor-E { grid-area: var(--grid-E); }
+#foor-W { grid-area: var(--grid-W); }
+#foor-S { grid-area: var(--grid-S); }
+
 
 .wrapper {
     display: grid;

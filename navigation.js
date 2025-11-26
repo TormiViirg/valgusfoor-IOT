@@ -1,18 +1,23 @@
-    document.addEventListener('DOMContentLoaded', function () {
-        let feIntersectionId = 0;
+window.feIntersectionId = 0;
 
-        const img = document.getElementById("intersectionImg");
-        const buttons = document.querySelectorAll("button[data-img]");
+document.addEventListener('DOMContentLoaded', function () {
 
-        buttons.forEach(btn => {
-            btn.addEventListener("click", () => {
+    const img = document.getElementById("intersectionImg");
+    const buttons = document.querySelectorAll("button[data-img]");
 
-                const match = btn.id.match(/intersection(\d+)/);
-                if (match) feIntersectionId = parseInt(match[1], 10);
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
 
-                if (btn.dataset.img) img.src = btn.dataset.img;
+            const match = btn.id.match(/intersection(\d+)/);
+            if (match) window.feIntersectionId = parseInt(match[1], 10);
 
-                console.log('feIntersectionId =', feIntersectionId);
+            if (btn.dataset.img) img.src = btn.dataset.img;
+
+            console.log('feIntersectionId =', window.feIntersectionId);
+
+            read(window.feIntersectionId).then(returnData => {
+                if (returnData?.data) updateGridAreasCSSVar(returnData.data);
             });
         });
     });
+});
