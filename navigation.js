@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     buttons.forEach(btn => {
         btn.addEventListener("click", () => {
-
             const match = btn.id.match(/intersection(\d+)/);
+
             if (match) window.feIntersectionId = parseInt(match[1], 10);
 
             if (btn.dataset.img) img.src = btn.dataset.img;
@@ -16,7 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('feIntersectionId =', window.feIntersectionId);
 
             read(window.feIntersectionId).then(returnData => {
-                if (returnData?.data) updateGridAreasCSSVar(returnData.data);
+                if (returnData?.data) {
+                    updateGridAreasCSSVar(returnData.data);
+                    window.foorietapid = buildFooriEtapidFromBackend(returnData);
+                }
             });
         });
     });

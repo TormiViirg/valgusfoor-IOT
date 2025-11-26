@@ -4,13 +4,8 @@ let foorinihe=7000;
 let foorifaas=0;
 let g=null;
 
-let foorietapid=[
-  [0, ["punane"]],
-  [0.4, ["punane", "kollane"]],
-  [0.5, ["roheline"]],
-  [0.8, ["roheline", "kollane"]],
-  [0.9, ["kollane"]]
-];
+window.foorietapid = [];
+
 let foorikoordinaadid={
   "punane": [100, "red"],
   "kollane": [200, "yellow"],
@@ -41,8 +36,8 @@ function updateAllFoorLights(etapp){
 }
 
 
-
 function fooriEtapp(){
+  if (!window.foorietapid || window.foorietapid.length === 0) return [];
   let v=foorietapid[0][1];
   for(let etapp of foorietapid){
     if(foorifaas>etapp[0]){v=etapp[1]}

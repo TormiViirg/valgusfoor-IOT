@@ -1,3 +1,5 @@
+window.feIntersectionId = 0;
+window.foorietapid = []; 
 const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgisa7k5EiiwceV6rdwYlQvDekaUzkpwMPTh_0BWt6iGzbY/exec"
 
 let lightData = [];
@@ -33,9 +35,34 @@ function updateGridAreasCSSVar(data) {
   if (!updated.W) root.style.setProperty('--grid-W', fallbackTile);
 }
 
+function buildFooriEtapidFromBackend(jsonData) {
+  const cycle = jsonData.data[0].CycleData;
+  const stages = [];
+  let current = 0;
+
+  if (cycle.RedRatio > 0) stages.push([current, ["punane"]]);
+  current += cycle.RedRatio;
+
+  if (cycle.RedYellowRatio > 0) stages.push([current, ["punane", "kollane"]]);
+  current += cycle.RedYellowRatio;
+
+  if (cycle.GreenRatio > 0) stages.push([current, ["roheline"]]);
+  current += cycle.GreenRatio;
+
+  if (cycle.GreenYellowRatio > 0) stages.push([current, ["roheline", "kollane"]]);
+  current += cycle.GreenYellowRatio;
+
+  if (cycle.YellowRatio > 0) stages.push([current, ["kollane"]]);
+
+  if (stages.length === 0) stages.push([0, ["punane"]]); // default
+  return stages;
+}
+
+
 read(feIntersectionId).then(returnData => {
   if (returnData?.data) {
     updateGridAreasCSSVar(returnData.data);
+    window.foorietapid = buildFooriEtapidFromBackend(returnData);
   }
 });
 
@@ -80,14 +107,17 @@ function read(feIntersectionId) {
 }
 
 async function main() {
-    while (true) {
-        if (window.feIntersectionId !== undefined) {
-            read(window.feIntersectionId).then(returnData => {
-                if (returnData?.data) updateGridAreasCSSVar(returnData.data);
-            });
+  while (true) {
+    if (window.feIntersectionId > 0) {
+      read(window.feIntersectionId).then(returnData => {
+        if (returnData?.data) {
+          updateGridAreasCSSVar(returnData.data);
+          window.foorietapid = buildFooriEtapidFromBackend(returnData);
         }
-        await new Promise(resolve => setTimeout(resolve, 10_000));
+      });
     }
+    await new Promise(resolve => setTimeout(resolve, 10_000));
+  }
 }
 
 main();
