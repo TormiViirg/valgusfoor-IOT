@@ -1,11 +1,14 @@
+window.serverResponse = null;
 window.feIntersectionId = 0;
-window.foorietapid = []; 
+window.foorietapid = [];
+
 const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgisa7k5EiiwceV6rdwYlQvDekaUzkpwMPTh_0BWt6iGzbY/exec"
 
 let lightData = [];
 let success = false;
 let time = 0;
 let messages = [];
+const pollInMs = 10000;
 
 function updateGridAreasCSSVar(data) {
   console.log("GRID VAR INPUT:", data);
@@ -36,7 +39,13 @@ function updateGridAreasCSSVar(data) {
 }
 
 function buildFooriEtapidFromBackend(jsonData) {
-  const cycle = jsonData.data[0].CycleData;
+  if (!jsonData.data || jsonData.data.length === 0) {
+    console.warn("[FETCH] No cycle data; fallback to single yellow.");
+    return [[0, ["kollane"]]];
+  }
+
+  const cycle = jsonData.data[0].CycleData || {};
+
   const stages = [];
   let current = 0;
 
@@ -54,7 +63,7 @@ function buildFooriEtapidFromBackend(jsonData) {
 
   if (cycle.YellowRatio > 0) stages.push([current, ["kollane"]]);
 
-  if (stages.length === 0) stages.push([0, ["punane"]]); // default
+  if (stages.length === 0) stages.push([0, ["punane"]]);
   return stages;
 }
 
@@ -67,34 +76,17 @@ read(feIntersectionId).then(returnData => {
 });
 
 
-async function fetchData(url, onSuccess = null, onError = null) {
-
+async function fetchData(url) {
   try {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (typeof onSuccess === 'function') {
-      onSuccess(data);
-    }
-
-    return data;
-
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.json();   
   } catch (err) {
-    console.error('Fetch error:', err);
-
-    if (typeof onError === 'function') {
-      onError(err);
-    }
-
-  } finally {
+    console.error("[FETCH] fetchData error", err);
+    return null;                
   }
-
 }
+
 
 function read(feIntersectionId) {
     const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
@@ -102,6 +94,7 @@ function read(feIntersectionId) {
     return fetchData(url).then(returnData => {
         if (!returnData) return null;
         console.log("API:", returnData);
+        window.serverResponse = returnData;
         return returnData;
     });
 }
@@ -113,6 +106,7 @@ async function main() {
         if (returnData?.data) {
           updateGridAreasCSSVar(returnData.data);
           window.foorietapid = buildFooriEtapidFromBackend(returnData);
+          updateIntersectionStateMachine();
         }
       });
     }

@@ -1,108 +1,262 @@
+let intersectionStates = null;
 const RED = "Red";
 const YELLOW = "Yellow";
 const GREEN = "Green";
+let currentState = "ALL_YELLOW";
 
-const threeWayJunction = {
+const COLOR_MAP_STATE_TO_DOM = { 
+  "Red":    "punane",
+  "Yellow": "kollane",
+  "Green":  "roheline"
+};
+
+const threeWay = {
+    ALL_YELLOW: {
+        name: "All Yellow (Safety Mode)",
+        lights: { 
+            S: YELLOW, 
+            E: YELLOW, 
+            W: YELLOW 
+        },
+        next: "ALL_YELLOW"
+    },
+
     ALL_RED: {
         name: "All-Red",
-        lights: { South: RED, East: RED, West: RED },
+        lights: {
+            S: RED,
+            E: RED,
+            W: RED
+        },
         next: "SOUTH_GREEN"
     },
 
     SOUTH_GREEN: {
         name: "South Green",
-        lights: { South: GREEN, East: RED, West: RED },
+        lights: {
+            S: GREEN,
+            E: RED,
+            W: RED 
+        },
         next: "SOUTH_YELLOW"
     },
 
     SOUTH_YELLOW: {
         name: "South Yellow",
-        lights: { South: YELLOW, East: RED, West: RED },
+        lights: {
+            S: YELLOW,
+            E: RED, 
+            W: RED 
+        },
         next: "EW_GREEN"
     },
 
     EW_GREEN: {
         name: "East-West Green",
-        lights: { South: RED, East: GREEN, West: GREEN },
+        lights: { 
+            S: RED, 
+            E: GREEN, 
+            W: GREEN 
+        },
         next: "EW_YELLOW"
     },
 
     EW_YELLOW: {
         name: "East-West Yellow",
-        lights: { South: RED, East: YELLOW, West: YELLOW },
+        lights: { 
+            S: RED,
+            E: YELLOW,
+            W: YELLOW 
+        },
         next: "ALL_RED"
     }
 };
 
 const fourWay = {
+    ALL_YELLOW: {
+        name: "All Yellow (Safety Mode)",
+        lights: {
+            N: YELLOW, 
+            S: YELLOW, 
+            E: YELLOW,
+            W: YELLOW 
+        },
+        next: "ALL_YELLOW"
+    },
     ALL_RED: {
         name: "All-Red",
-        lights: { North: RED, South: RED, East: RED, West: RED },
+        lights: { 
+            N: RED,
+            S: RED, 
+            E: RED,
+            W: RED 
+        },
         next: "NS_GREEN"
     },
 
     NS_GREEN: {
         name: "North-South Green",
-        lights: { North: GREEN, South: GREEN, East: RED, West: RED },
+        lights: { 
+            N: GREEN,
+            S: GREEN, 
+            E: RED,
+            W: RED 
+        },
         next: "NS_YELLOW"
     },
 
     NS_YELLOW: {
         name: "North-South Yellow",
-        lights: { North: YELLOW, South: YELLOW, East: RED, West: RED },
+        lights: { 
+            N: YELLOW, 
+            S: YELLOW, 
+            E: RED,
+            W: RED 
+        },
         next: "ALL_RED_2"
     },
 
     ALL_RED_2: {
         name: "All-Red (transition)",
-        lights: { North: RED, South: RED, East: RED, West: RED },
+        lights: { 
+            N: RED,
+            S: RED,
+            E: RED, 
+            W: RED
+        },
         next: "EW_GREEN"
     },
 
     EW_GREEN: {
         name: "East-West Green",
-        lights: { North: RED, South: RED, East: GREEN, West: GREEN },
+        lights: {
+            N: RED, 
+            S: RED,
+            E: GREEN,
+            W: GREEN 
+        },
         next: "EW_YELLOW"
     },
 
     EW_YELLOW: {
         name: "East-West Yellow",
-        lights: { North: RED, South: RED, East: YELLOW, West: YELLOW },
+        lights: { 
+            N: RED,
+            S: RED,
+            E: YELLOW,
+            W: YELLOW 
+        },
         next: "ALL_RED"
     }
 };
 
 const twoWay = {
+    ALL_YELLOW: {
+        name: "All Yellow (Safety Mode)",
+        lights: { 
+            E: YELLOW,
+            W: YELLOW 
+        },
+        next: "ALL_YELLOW"
+    },
+
     EW_GREEN: {
         name: "East-West Green",
-        light: { East: GREEN, West: Green },
+        lights: { 
+            E: GREEN,
+            W: GREEN 
+        },
         next: "EW_YELLOW"
     },
 
     EW_YELLOW: {
         name: "East-West Yellow",
-        light: { East: YELLOW, West: YELLOW },
+        lights: { 
+            E: YELLOW,
+            W: YELLOW
+        },
         next: "EW_RED"
     },
 
     EW_RED: {
         name: "East-West Red",
-        light: { East: RED, West: RED },
+        lights: { 
+            E: RED,
+            W: RED
+        },
         next: "EW_GREEN"
     }
 };
 
-let currentState = "ALL_YELLOW";
+function updateIntersectionStateMachine() {
+    if (!window.serverResponse) return;
+    intersectionStates = detectIntersectionType(window.serverResponse);
+}
+
 
 function transition() {
-    const state = states[currentState];
+    if (!intersectionStates) {
+        currentState = "ALL_YELLOW";
+        intersectionStates = detectIntersectionType(window.serverResponse);
+    }
+
+    if (!intersectionStates || !intersectionStates.ALL_YELLOW) {
+        intersectionStates = { ALL_YELLOW: threeWay.ALL_YELLOW };
+    }
+
+    let state = intersectionStates[currentState];
+
+    if (!state) {
+        console.warn("Invalid state, falling back to ALL_YELLOW");
+        currentState = "ALL_YELLOW";
+        state = intersectionStates[currentState];
+    }
 
     console.log(`\n=== ${state.name} ===`);
-    console.log(`South: ${state.lights.South}`);
-    console.log(`East : ${state.lights.East}`);
-    console.log(`West : ${state.lights.West}`);
+    console.log(state.lights);
 
     currentState = state.next;
 }
 
+
+function detectIntersectionType(serverResponse) {
+    if (!serverResponse?.data) return { ALL_YELLOW: twoWay.ALL_YELLOW }; 
+
+    const serverData = serverResponse.data;
+    const directions = serverData.map(d => d.CardinalDirection);
+
+    const count = directions.length;
+
+    if (count === 2) return twoWay;
+    if (count === 3) return threeWay;
+    if (count === 4) return fourWay;
+
+    console.warn("Invalid intersection: entering ALL_YELLOW safety mode");
+
+    return { ALL_YELLOW: fourWay.ALL_YELLOW };
+}
+
+
+function updateLightsFromStateMachine(mappedLights) {
+    document.querySelectorAll('.wrapper').forEach(wrapper => {
+
+        const direction = wrapper.dataset.direction;
+        const lampColor = mappedLights[direction];
+
+        const lamps = {
+            punane:   wrapper.querySelector('.lamp[data-color="punane"]'),
+            kollane:  wrapper.querySelector('.lamp[data-color="kollane"]'),
+            roheline: wrapper.querySelector('.lamp[data-color="roheline"]')
+        };
+
+        for (let key in lamps) lamps[key].classList.remove("on");
+
+        if (lampColor && lamps[lampColor]) {
+            lamps[lampColor].classList.add("on");
+        }
+    });
+}
+
+
 setInterval(transition, 10000);
+window.stateMachines = { twoWay, threeWay, fourWay, COLOR_MAP_STATE_TO_DOM };

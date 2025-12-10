@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (returnData?.data) {
                     updateGridAreasCSSVar(returnData.data);
                     window.foorietapid = buildFooriEtapidFromBackend(returnData);
+                    window.serverResponse = returnData;
+                    updateIntersectionStateMachine();
                 }
             });
         });
