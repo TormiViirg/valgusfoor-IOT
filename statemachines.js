@@ -259,4 +259,9 @@ function updateLightsFromStateMachine(mappedLights) {
 
 
 setInterval(transition, 10000);
-window.stateMachines = { twoWay, threeWay, fourWay, COLOR_MAP_STATE_TO_DOM };
+window.stateMachines = { 
+    twoWay, 
+    threeWay, 
+    fourWay, 
+    COLOR_MAP_STATE_TO_DOM
+};

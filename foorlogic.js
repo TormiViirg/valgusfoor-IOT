@@ -111,23 +111,23 @@ function kuvaFoor(){
 }
 
 function baseEtappToStateMachineState(etapp) {
-    if (!intersectionStates) return "ALL_YELLOW";
+  if (!window.serverResponse?.data) return "ALL_YELLOW";
 
-    const color = etapp.includes("roheline") ? "GREEN" :
-                  etapp.includes("kollane")  ? "YELLOW" :
-                                               "RED";
+  const masterDirection = getMasterDirection(window.serverResponse.data);
 
-    switch(color) {
-        case "GREEN":
-            return Object.keys(intersectionStates).find(k => k.includes("GREEN")) || "ALL_YELLOW";
+  const masterColor =
+      etapp.includes("roheline") ? "Green" :
+      etapp.includes("kollane") ? "Yellow" :
+      "Red";
 
-        case "YELLOW":
-            return Object.keys(intersectionStates).find(k => k.includes("YELLOW")) || "ALL_YELLOW";
-
-        case "RED":
-            return "ALL_RED";
-    }
+  return determineStateFromMaster(
+      window.serverResponse.data,
+      masterColor,
+      masterDirection
+  );
 }
+
+
 
 function getLampsFromStateMachine(stateName) {
   const st = intersectionStates?.[stateName];
@@ -162,4 +162,31 @@ function updateLightsFromStateMachine(mappedLights) {
       lamps[lampColor].classList.add("on");
     }
   });
+}
+
+
+function determineStateFromMaster(serverData, masterColor, masterDirection) {
+  if (!intersectionStates || !masterDirection) return "ALL_YELLOW";
+  const color = masterColor;
+
+  for (const [stateName, stateObj] of Object.entries(intersectionStates)) {
+    if (stateObj.lights && stateObj.lights[masterDirection] === color) {
+        return stateName;
+    }
+  }
+
+  for (const [stateName, stateObj] of Object.entries(intersectionStates)) {
+      if (!stateObj.lights) continue;
+
+      let count = 0, total = 0;
+      for (const val of Object.values(stateObj.lights)) {
+        total++;
+        if (val === color) count++;
+      }
+      if (count > 0 && (stateObj.lights[masterDirection] === undefined)) {
+        return stateName;
+      }
+  }
+
+  return "ALL_YELLOW";
 }

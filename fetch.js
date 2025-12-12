@@ -2,7 +2,9 @@ window.serverResponse = null;
 window.feIntersectionId = 0;
 window.foorietapid = [];
 
+
 const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgisa7k5EiiwceV6rdwYlQvDekaUzkpwMPTh_0BWt6iGzbY/exec"
+
 
 let lightData = [];
 let success = false;
@@ -10,17 +12,23 @@ let time = 0;
 let messages = [];
 const pollInMs = 10000;
 
+
 function updateGridAreasCSSVar(data) {
   console.log("GRID VAR INPUT:", data);
 
+
   const root = document.documentElement;
 
+
   const updated = { N: false, E: false, S: false, W: false };
+
 
   data.forEach(item => {
       if (!item.CardinalDirection || !item.Tile) return;
 
+
       updated[item.CardinalDirection] = true;
+
 
       switch (item.CardinalDirection) {
           case "N": root.style.setProperty('--grid-N', item.Tile); break;
@@ -30,7 +38,9 @@ function updateGridAreasCSSVar(data) {
       }
   });
 
+
   const fallbackTile = "1 / 1";
+
 
   if (!updated.N) root.style.setProperty('--grid-N', fallbackTile);
   if (!updated.E) root.style.setProperty('--grid-E', fallbackTile);
@@ -38,80 +48,78 @@ function updateGridAreasCSSVar(data) {
   if (!updated.W) root.style.setProperty('--grid-W', fallbackTile);
 }
 
+
 function buildFooriEtapidFromBackend(jsonData) {
   if (!jsonData.data || jsonData.data.length === 0) {
     console.warn("[FETCH] No cycle data; fallback to single yellow.");
     return [[0, ["kollane"]]];
   }
 
+
   const cycle = jsonData.data[0].CycleData || {};
+
 
   const stages = [];
   let current = 0;
 
+
   if (cycle.RedRatio > 0) stages.push([current, ["punane"]]);
   current += cycle.RedRatio;
+
 
   if (cycle.RedYellowRatio > 0) stages.push([current, ["punane", "kollane"]]);
   current += cycle.RedYellowRatio;
 
+
   if (cycle.GreenRatio > 0) stages.push([current, ["roheline"]]);
   current += cycle.GreenRatio;
+
 
   if (cycle.GreenYellowRatio > 0) stages.push([current, ["roheline", "kollane"]]);
   current += cycle.GreenYellowRatio;
 
+
   if (cycle.YellowRatio > 0) stages.push([current, ["kollane"]]);
+
 
   if (stages.length === 0) stages.push([0, ["punane"]]);
   return stages;
 }
 
 
-read(feIntersectionId).then(returnData => {
-  if (returnData?.data) {
-    updateGridAreasCSSVar(returnData.data);
-    window.foorietapid = buildFooriEtapidFromBackend(returnData);
+async function read(feIntersectionId) {
+  const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data) return null;
+
+
+  window.serverResponse = data;
+
+
+  if (data?.data) {
+    updateGridAreasCSSVar(data.data);
+    window.foorietapid = buildFooriEtapidFromBackend(data);
   }
-});
 
 
-async function fetchData(url) {
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    return await resp.json();   
-  } catch (err) {
-    console.error("[FETCH] fetchData error", err);
-    return null;                
-  }
-}
+  updateIntersectionStateMachine();
+ 
+  return data;
+};
 
 
-function read(feIntersectionId) {
-    const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
-
-    return fetchData(url).then(returnData => {
-        if (!returnData) return null;
-        console.log("API:", returnData);
-        window.serverResponse = returnData;
-        return returnData;
-    });
-}
-
-async function main() {
-  while (true) {
-    if (window.feIntersectionId > 0) {
-      read(window.feIntersectionId).then(returnData => {
-        if (returnData?.data) {
-          updateGridAreasCSSVar(returnData.data);
-          window.foorietapid = buildFooriEtapidFromBackend(returnData);
-          updateIntersectionStateMachine();
-        }
-      });
+function getMasterDirection(serverData) {
+    if (!Array.isArray(serverData) || serverData.length === 0) {
+        console.warn("getMasterDirection: no server data");
+        return null;
     }
-    await new Promise(resolve => setTimeout(resolve, 10_000));
-  }
+    const main = serverData.find(d => d.IsMainTrafficLight === true);
+    if (!main) {
+        console.warn("No IsMainTrafficLight=true found; falling back to first entry if available");
+        return serverData[0]?.CardinalDirection || null;
+    }
+    return main.CardinalDirection || null;
 }
 
-main();
