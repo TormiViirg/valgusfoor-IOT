@@ -14,8 +14,8 @@ const threeWay = {
     ALL_YELLOW: {
         name: "All Yellow (Safety Mode)",
         lights: { 
-            S: YELLOW, 
-            E: YELLOW, 
+            N: YELLOW,
+            S: YELLOW,  
             W: YELLOW 
         },
         next: "ALL_YELLOW"
@@ -24,8 +24,8 @@ const threeWay = {
     ALL_RED: {
         name: "All-Red",
         lights: {
+            N: RED,
             S: RED,
-            E: RED,
             W: RED
         },
         next: "SOUTH_GREEN"
@@ -34,8 +34,8 @@ const threeWay = {
     SOUTH_GREEN: {
         name: "South Green",
         lights: {
+            N: RED,
             S: GREEN,
-            E: RED,
             W: RED 
         },
         next: "SOUTH_YELLOW"
@@ -44,28 +44,28 @@ const threeWay = {
     SOUTH_YELLOW: {
         name: "South Yellow",
         lights: {
-            S: YELLOW,
-            E: RED, 
+            N: RED,
+            S: YELLOW, 
             W: RED 
         },
-        next: "EW_GREEN"
+        next: "NW_GREEN"
     },
 
-    EW_GREEN: {
-        name: "East-West Green",
+    NW_GREEN: {
+        name: "North-West Green",
         lights: { 
-            S: RED, 
-            E: GREEN, 
+            N: GREEN,
+            S: RED,  
             W: GREEN 
         },
-        next: "EW_YELLOW"
+        next: "NW_YELLOW"
     },
 
-    EW_YELLOW: {
-        name: "East-West Yellow",
+    NW_YELLOW: {
+        name: "North-West Yellow",
         lights: { 
+            N: YELLOW,
             S: RED,
-            E: YELLOW,
             W: YELLOW 
         },
         next: "ALL_RED"
