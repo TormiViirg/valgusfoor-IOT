@@ -40,6 +40,7 @@ function updateGridAreasCSSVar(data) {
 
 
 function buildFooriEtapidFromBackend(jsonData) {
+  
   if (!jsonData.data || jsonData.data.length === 0) {
     console.warn("[FETCH] No cycle data; fallback to single yellow.");
     return [[0, ["kollane"]]];

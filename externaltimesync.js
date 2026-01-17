@@ -7,7 +7,8 @@ function algusCommon() {
     "https://script.google.com/macros/s/AKfycbxdq8ssXCLFLxr_-oP_ImA6GZ-fRQxilwQHu0cnx1vFhiVfGkqo8hNtQWaJVhi-aDW6/exec"
   )
     .then(d => d.text())
-    .then(edasi);
+    .then(edasi)
+  ;
 
   kysiKonf();
   setInterval(kysiKonf, 10000);
@@ -24,7 +25,8 @@ function kysiKonf() {
     "https://script.google.com/macros/s/AKfycbxV1OxeoNoeuYFW4RfOa3Ar2VDYTI6VjaWTEQwaSkPQAqxQttvqTap8HbvQ-onIgVF-nQ/exec?foorinr=1"
   )
     .then(d => d.json())
-    .then(salvestaKonf);
+    .then(salvestaKonf)
+  ;
 }
 
 function salvestaKonf(d) {

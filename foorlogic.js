@@ -87,7 +87,8 @@ function baseEtappToStateMachineState(etapp) {
   const masterColor =
     etapp.includes("roheline") ? "Green" :
     etapp.includes("kollane") ? "Yellow" :
-    "Red";
+    "Red"
+  ;
 
   return determineStateFromMaster(
     window.serverResponse.data,
