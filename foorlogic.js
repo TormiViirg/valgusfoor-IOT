@@ -5,20 +5,11 @@ let foorifaas = 0;
 let g = null;
 const et = fooriEtapp();
 
-window.foorietapid = [];
-
 let foorikoordinaadid={
   "punane": [100, "red"],
   "kollane": [200, "yellow"],
   "roheline": [300, "green"]
 }
-
-const foorOffsets = {
-  "foor-N": 0,       
-  "foor-E": 5000,    
-  "foor-S": 10000,   
-  "foor-W": 15000    
-};
 
 function updateAllFoorLights(etapp){
   document.querySelectorAll('.wrapper').forEach(wrapper => {
@@ -48,11 +39,17 @@ function updateAllFoorLights(etapp){
 
 
 function fooriEtapp(){
+
   if (!window.foorietapid || window.foorietapid.length === 0) return [];
+
   let v = foorietapid[0][1];
+
   for(let etapp of foorietapid){
-    if(foorifaas>etapp[0]){v=etapp[1]}
+    if(foorifaas > etapp[0]){
+      v=etapp[1]
+    }
   }
+
   return v;
 }
 
@@ -62,13 +59,13 @@ function algus(){
   ).then(d => d.text()).then(edasi);
   kysiKonf();		 
   setInterval(kysiKonf, 10000);
-  g=c1.getContext("2d");
+  g = c1.getContext("2d");
 }
 
 
 function edasi(d){
   console.log(d);
-  nihe=new Date().getTime()-parseInt(d);
+  nihe = new Date().getTime() - parseInt(d);
   console.log(nihe);
   kuvaAeg();
   setInterval(kuvaAeg, 1000);
@@ -82,18 +79,19 @@ function kysiKonf(){
 
 function salvestaKonf(d){
   console.log(d);
-  kestus=d[0]*1000;
-  foorinihe=d[1]*1000;
+  kestus = d[0] * 1000;
+  foorinihe = d[1] * 1000;
 }
 
 
 function kuvaAeg(){
-  let aeg=new Date(new Date().getTime()-nihe);
-  kiht1.innerText=aeg.getHours()+":"+aeg.getMinutes()+":"+aeg.getSeconds();
-  fooriaeg=((aeg-foorinihe) % kestus);
-  kiht2.innerText=parseInt(fooriaeg);
-  foorifaas=fooriaeg/kestus;
-  kiht3.innerText=fooriEtapp();
+  let aeg = new Date(new Date().getTime() - nihe);
+
+  kiht1.innerText = aeg.getHours() + ":" + aeg.getMinutes() + ":" + aeg.getSeconds();
+  fooriaeg = ((aeg-foorinihe) % kestus);
+  kiht2.innerText = parseInt(fooriaeg);
+  foorifaas = fooriaeg/kestus;
+  kiht3.innerText = fooriEtapp();
 
   const mainFoor = fooriEtapp();
   const machineState = baseEtappToStateMachineState(mainFoor);
@@ -116,17 +114,17 @@ function baseEtappToStateMachineState(etapp) {
   const masterDirection = getMasterDirection(window.serverResponse.data);
 
   const masterColor =
-      etapp.includes("roheline") ? "Green" :
-      etapp.includes("kollane") ? "Yellow" :
-      "Red";
+    etapp.includes("roheline") ? "Green" :
+    etapp.includes("kollane") ? "Yellow" :
+    "Red"
+  ;
 
   return determineStateFromMaster(
-      window.serverResponse.data,
-      masterColor,
-      masterDirection
+    window.serverResponse.data,
+    masterColor,
+    masterDirection
   );
 }
-
 
 
 function getLampsFromStateMachine(stateName) {
@@ -151,8 +149,8 @@ function updateLightsFromStateMachine(mappedLights) {
     const lampColor = mappedLights[direction];
 
     const lamps = {
-      punane:   wrapper.querySelector('.lamp[data-color="punane"]'),
-      kollane:  wrapper.querySelector('.lamp[data-color="kollane"]'),
+      punane: wrapper.querySelector('.lamp[data-color="punane"]'),
+      kollane: wrapper.querySelector('.lamp[data-color="kollane"]'),
       roheline: wrapper.querySelector('.lamp[data-color="roheline"]')
     };
 
@@ -166,6 +164,9 @@ function updateLightsFromStateMachine(mappedLights) {
 
 
 function determineStateFromMaster(serverData, masterColor, masterDirection) {
+
+  if (!serverData) return "ALL_YELLOW";
+
   if (!intersectionStates || !masterDirection) return "ALL_YELLOW";
   const color = masterColor;
 
@@ -176,16 +177,16 @@ function determineStateFromMaster(serverData, masterColor, masterDirection) {
   }
 
   for (const [stateName, stateObj] of Object.entries(intersectionStates)) {
-      if (!stateObj.lights) continue;
+    if (!stateObj.lights) continue;
 
-      let count = 0, total = 0;
-      for (const val of Object.values(stateObj.lights)) {
-        total++;
-        if (val === color) count++;
-      }
-      if (count > 0 && (stateObj.lights[masterDirection] === undefined)) {
-        return stateName;
-      }
+    let count = 0, total = 0;
+    for (const val of Object.values(stateObj.lights)) {
+      total++;
+      if (val === color) count++;
+    }
+    if (count > 0 && (stateObj.lights[masterDirection] === undefined)) {
+      return stateName;
+    }
   }
 
   return "ALL_YELLOW";

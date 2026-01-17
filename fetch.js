@@ -1,10 +1,7 @@
 window.serverResponse = null;
 window.feIntersectionId = 0;
-window.foorietapid = [];
-
 
 const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgisa7k5EiiwceV6rdwYlQvDekaUzkpwMPTh_0BWt6iGzbY/exec"
-
 
 let lightData = [];
 let success = false;
@@ -16,31 +13,24 @@ const pollInMs = 10000;
 function updateGridAreasCSSVar(data) {
   console.log("GRID VAR INPUT:", data);
 
-
   const root = document.documentElement;
-
 
   const updated = { N: false, E: false, S: false, W: false };
 
-
   data.forEach(item => {
-      if (!item.CardinalDirection || !item.Tile) return;
+    if (!item.CardinalDirection || !item.Tile) return;
 
+    updated[item.CardinalDirection] = true;
 
-      updated[item.CardinalDirection] = true;
-
-
-      switch (item.CardinalDirection) {
-          case "N": root.style.setProperty('--grid-N', item.Tile); break;
-          case "E": root.style.setProperty('--grid-E', item.Tile); break;
-          case "S": root.style.setProperty('--grid-S', item.Tile); break;
-          case "W": root.style.setProperty('--grid-W', item.Tile); break;
-      }
+    switch (item.CardinalDirection) {
+      case "N": root.style.setProperty('--grid-N', item.Tile); break;
+      case "E": root.style.setProperty('--grid-E', item.Tile); break;
+      case "S": root.style.setProperty('--grid-S', item.Tile); break;
+      case "W": root.style.setProperty('--grid-W', item.Tile); break;
+    }
   });
 
-
   const fallbackTile = "1 / 1";
-
 
   if (!updated.N) root.style.setProperty('--grid-N', fallbackTile);
   if (!updated.E) root.style.setProperty('--grid-E', fallbackTile);
@@ -55,13 +45,10 @@ function buildFooriEtapidFromBackend(jsonData) {
     return [[0, ["kollane"]]];
   }
 
-
   const cycle = jsonData.data[0].CycleData || {};
-
 
   const stages = [];
   let current = 0;
-
 
   if (cycle.RedRatio > 0) stages.push([current, ["punane"]]);
   current += cycle.RedRatio;
@@ -83,43 +70,40 @@ function buildFooriEtapidFromBackend(jsonData) {
 
 
   if (stages.length === 0) stages.push([0, ["punane"]]);
+
   return stages;
 }
 
 
 async function read(feIntersectionId) {
+
   const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
   const res = await fetch(url);
   const data = await res.json();
 
   if (!data) return null;
 
-
   window.serverResponse = data;
 
-
-  if (data?.data) {
-    updateGridAreasCSSVar(data.data);
-    window.foorietapid = buildFooriEtapidFromBackend(data);
-  }
-
-
   updateIntersectionStateMachine();
- 
   return data;
 };
 
 
 function getMasterDirection(serverData) {
-    if (!Array.isArray(serverData) || serverData.length === 0) {
-        console.warn("getMasterDirection: no server data");
-        return null;
-    }
-    const main = serverData.find(d => d.IsMainTrafficLight === true);
-    if (!main) {
-        console.warn("No IsMainTrafficLight=true found; falling back to first entry if available");
-        return serverData[0]?.CardinalDirection || null;
-    }
-    return main.CardinalDirection || null;
+
+  if (!Array.isArray(serverData) || serverData.length === 0) {
+    console.warn("getMasterDirection: no server data");
+    return null;
+  }
+
+  const main = serverData.find(d => d.IsMainTrafficLight === true);
+
+  if (!main) {
+    console.warn("No IsMainTrafficLight=true found; falling back to first entry if available");
+    return serverData[0]?.CardinalDirection || null;
+  }
+
+  return main.CardinalDirection || null;
 }
 

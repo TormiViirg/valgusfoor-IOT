@@ -1,4 +1,7 @@
 window.feIntersectionId = 0;
+window.foorietapid = null;
+window.serverResponse = null;
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
