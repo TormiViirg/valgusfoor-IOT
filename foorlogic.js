@@ -59,12 +59,30 @@ function algus() {
 
 
 function kuvaAeg() {
-  let aeg = new Date(new Date().getTime() - nihe);
+  const aeg = getCurrentTime();
 
-  kiht1.innerText = aeg.getHours() + ":" + aeg.getMinutes() + ":" + aeg.getSeconds();
+  kiht1.innerText =
+    aeg.getHours().toString().padStart(2, "0") + ":" +
+    aeg.getMinutes().toString().padStart(2, "0") + ":" +
+    aeg.getSeconds().toString().padStart(2, "0")
+  ;
 
-  fooriaeg = (aeg - foorinihe) % kestus;
-  kiht2.innerText = parseInt(fooriaeg);
+  const now = Date.now();
+  const authoritative = aeg.getTime();
+
+  debug.innerText =
+    "client now:       " + now + "\n" +
+    "server anchored:  " + lastServerTime + "\n" +
+    "elapsed:          " + (now - lastClientTime) + "\n" +
+    "authoritative:    " + authoritative + "\n" +
+    "delta(ms):        " + (authoritative - now)
+  ;
+
+
+  fooriaeg = (aeg.getTime() - foorinihe) % kestus;
+  if (fooriaeg < 0) fooriaeg += kestus;
+
+  kiht2.innerText = Math.floor(fooriaeg / 1000);
 
   foorifaas = fooriaeg / kestus;
   kiht3.innerText = fooriEtapp();
@@ -77,6 +95,7 @@ function kuvaAeg() {
   const lampsForAll = getLampsFromStateMachine(currentState);
   updateLightsFromStateMachine(lampsForAll);
 }
+
 
 function kuvaFoor() {
   g.clearRect(0, 0, 200, 400);

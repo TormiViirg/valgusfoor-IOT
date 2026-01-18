@@ -1,24 +1,43 @@
-let nihe = 0;
+let lastServerTime = null; 
+let lastClientTime = null;
+
 let kestus = 0;
 let foorinihe = 0;
 
 function algusCommon() {
-  fetch(
-    "https://script.google.com/macros/s/AKfycbxdq8ssXCLFLxr_-oP_ImA6GZ-fRQxilwQHu0cnx1vFhiVfGkqo8hNtQWaJVhi-aDW6/exec"
-  )
-    .then(d => d.text())
-    .then(edasi)
-  ;
+  syncFromServerTime();
+  setInterval(syncFromServerTime, 30000);
 
   kysiKonf();
   setInterval(kysiKonf, 10000);
 }
 
 
-function edasi(d) {
-  console.log(d);
-  nihe = new Date().getTime() - parseInt(d);
-  console.log(nihe);
+function syncFromServerTime() {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbxdq8ssXCLFLxr_-oP_ImA6GZ-fRQxilwQHu0cnx1vFhiVfGkqo8hNtQWaJVhi-aDW6/exec"
+  )
+    .then(d => d.text())
+    .then(serverTimeStr => {
+      const serverTime = parseInt(serverTimeStr, 10);
+      if (isNaN(serverTime)) return;
+
+      lastServerTime = serverTime;
+      lastClientTime = Date.now();
+    })
+    .catch(() => {
+      // server unreachable → keep running locally
+    });
+}
+
+
+function getCurrentTime() {
+  if (lastServerTime === null) {
+    return new Date();
+  }
+
+  const elapsed = Date.now() - lastClientTime;
+  return new Date(lastServerTime + elapsed);
 }
 
 
@@ -33,7 +52,7 @@ function kysiKonf() {
 
 
 function salvestaKonf(d) {
-  console.log(d);
+  if (!Array.isArray(d)) return;
   kestus = d[0] * 1000;
   foorinihe = d[1] * 1000;
 }
