@@ -1,0 +1,62 @@
+
+<!doctype html>
+<html>
+  <head>
+    <script>
+	   let nihe=0;
+	   let kestus=20000;
+	   let foorinihe=7000;
+	   function algus(){
+	     fetch("https://script.google.com/macros/s/AKfycbxdq8ssXCLFLxr_-oP_ImA6GZ-fRQxilwQHu0cnx1vFhiVfGkqo8hNtQWaJVhi-aDW6/exec"
+		   ).then(d => d.text()).then(edasi);
+		 kysiKonf();
+		 setInterval(kysiKonf, 10000);
+	   }
+	   function edasi(d){
+	      console.log(d);
+		  nihe=new Date().getTime()-parseInt(d);
+		  console.log(nihe);
+		  setInterval(kuvaAeg, 1000);
+	   }
+	   
+	   function kysiKonf(){
+	     fetch("https://script.google.com/macros/s/AKfycbxV1OxeoNoeuYFW4RfOa3Ar2VDYTI6VjaWTEQwaSkPQAqxQttvqTap8HbvQ-onIgVF-nQ/exec?foorinr=1"
+		   ).then(d => d.json()).then(salvestaKonf);
+	   }
+	   //Lubage foorinr määrata kasutajal
+	   
+	   function salvestaKonf(d){
+	      console.log(d);
+	      kestus=d[0]*1000;
+		  foorinihe=d[1]*1000;
+	   }
+	   
+        function kuvaAeg() {
+            let aeg = new Date(new Date().getTime() - nihe);
+
+            let hours = aeg.getHours();
+
+            if (hours >= 8 && hours < 21) {
+                kiht1.style.display = "block";
+                kiht2.style.display = "block";
+
+                kiht1.innerText =
+                aeg.getHours().toString().padStart(2, "0") + ":" +
+                aeg.getMinutes().toString().padStart(2, "0") + ":" +
+                aeg.getSeconds().toString().padStart(2, "0");
+
+                kiht2.innerText =
+                parseInt(((aeg - foorinihe) % kestus) / 1000);
+            } else {
+                kiht1.style.display = "none";
+                kiht2.style.display = "none";
+            }
+        }
+
+	</script>
+  </head>
+  <body onload="algus()">
+    <div id="kiht1">Kellaaja koht</div>
+    <div id="kiht2">Fooritsükli andmete koht</div>
+  </body>
+</html>

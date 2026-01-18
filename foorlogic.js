@@ -10,6 +10,7 @@ let foorikoordinaadid = {
   roheline: [300, "green"]
 };
 
+
 function updateAllFoorLights(etapp) {
   document.querySelectorAll(".wrapper").forEach(wrapper => {
     const lamps = {
@@ -32,6 +33,7 @@ function updateAllFoorLights(etapp) {
   });
 }
 
+
 function fooriEtapp() {
   if (!window.foorietapid || window.foorietapid.length === 0) return [];
 
@@ -46,6 +48,7 @@ function fooriEtapp() {
   return v;
 }
 
+
 function algus() {
   algusCommon();              
   g = c1.getContext("2d");
@@ -53,6 +56,7 @@ function algus() {
   kuvaAeg();
   setInterval(kuvaAeg, 1000);
 }
+
 
 function kuvaAeg() {
   let aeg = new Date(new Date().getTime() - nihe);
@@ -97,6 +101,7 @@ function baseEtappToStateMachineState(etapp) {
   );
 }
 
+
 function getLampsFromStateMachine(stateName) {
   const st = intersectionStates?.[stateName];
   if (!st) return {};
@@ -111,6 +116,7 @@ function getLampsFromStateMachine(stateName) {
 
   return out;
 }
+
 
 function updateLightsFromStateMachine(mappedLights) {
   document.querySelectorAll(".wrapper").forEach(wrapper => {
@@ -130,6 +136,7 @@ function updateLightsFromStateMachine(mappedLights) {
     }
   });
 }
+
 
 function determineStateFromMaster(serverData, masterColor, masterDirection) {
   if (!serverData) return "ALL_YELLOW";

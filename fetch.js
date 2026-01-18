@@ -10,12 +10,32 @@ let messages = [];
 const pollInMs = 10000;
 
 
+async function read(feIntersectionId) {
+
+  const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data) return null;
+
+  window.serverResponse = data;
+
+  updateIntersectionStateMachine();
+  return data;
+};
+
+
 function updateGridAreasCSSVar(data) {
   console.log("GRID VAR INPUT:", data);
 
   const root = document.documentElement;
 
-  const updated = { N: false, E: false, S: false, W: false };
+  const updated = { 
+    N: false, 
+    E: false, 
+    S: false, 
+    W: false 
+  };
 
   data.forEach(item => {
     if (!item.CardinalDirection || !item.Tile) return;
@@ -40,7 +60,7 @@ function updateGridAreasCSSVar(data) {
 
 
 function buildFooriEtapidFromBackend(jsonData) {
-  
+
   if (!jsonData.data || jsonData.data.length === 0) {
     console.warn("[FETCH] No cycle data; fallback to single yellow.");
     return [[0, ["kollane"]]];
@@ -74,21 +94,6 @@ function buildFooriEtapidFromBackend(jsonData) {
 
   return stages;
 }
-
-
-async function read(feIntersectionId) {
-
-  const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (!data) return null;
-
-  window.serverResponse = data;
-
-  updateIntersectionStateMachine();
-  return data;
-};
 
 
 function getMasterDirection(serverData) {

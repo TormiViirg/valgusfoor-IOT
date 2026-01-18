@@ -14,11 +14,13 @@ function algusCommon() {
   setInterval(kysiKonf, 10000);
 }
 
+
 function edasi(d) {
   console.log(d);
   nihe = new Date().getTime() - parseInt(d);
   console.log(nihe);
 }
+
 
 function kysiKonf() {
   fetch(
@@ -28,6 +30,7 @@ function kysiKonf() {
     .then(salvestaKonf)
   ;
 }
+
 
 function salvestaKonf(d) {
   console.log(d);
