@@ -188,16 +188,17 @@ const twoWay = {
     }
 };
 
-function updateIntersectionStateMachine() {
-    if (!window.serverResponse) return;
-    intersectionStates = detectIntersectionType(window.serverResponse);
+function updateIntersectionStateMachine(cleanedResponse) {
+    if (!Array.isArray(cleanedResponse)) return;
+    intersectionStates = detectIntersectionType(cleanedResponse);
 }
+
 
 
 function transition() {
     if (!intersectionStates) {
         currentState = "ALL_YELLOW";
-        intersectionStates = detectIntersectionType(window.serverResponse);
+        intersectionStates = detectIntersectionType(window.cleanedResponse);
     }
 
     if (!intersectionStates || !intersectionStates.ALL_YELLOW) {
@@ -219,11 +220,13 @@ function transition() {
 }
 
 
-function detectIntersectionType(serverResponse) {
-    if (!serverResponse?.data) return { ALL_YELLOW: twoWay.ALL_YELLOW }; 
+function detectIntersectionType(cleanedResponse) {
 
-    const serverData = serverResponse.data;
-    const directions = serverData.map(d => d.CardinalDirection);
+    if (!Array.isArray(cleanedResponse)) {
+        return { ALL_YELLOW: twoWay.ALL_YELLOW };
+    }
+
+    const directions = cleanedResponse.map(d => d.CardinalDirection);
 
     const count = directions.length;
 
@@ -259,6 +262,7 @@ function updateLightsFromStateMachine(mappedLights) {
 
 
 setInterval(transition, 10000);
+
 window.stateMachines = { 
     twoWay, 
     threeWay, 

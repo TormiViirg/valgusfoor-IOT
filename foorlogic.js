@@ -103,9 +103,9 @@ function kuvaFoor() {
 
 
 function baseEtappToStateMachineState(etapp) {
-  if (!window.serverResponse?.data) return "ALL_YELLOW";
+  if (!Array.isArray(window.cleanedResponse)) return "ALL_YELLOW";
 
-  const masterDirection = getMasterDirection(window.serverResponse.data);
+  const masterDirection = getMasterDirection(window.cleanedResponse);
 
   const masterColor =
     etapp.includes("roheline") ? "Green" :
@@ -114,7 +114,7 @@ function baseEtappToStateMachineState(etapp) {
   ;
 
   return determineStateFromMaster(
-    window.serverResponse.data,
+    window.cleanedResponse,
     masterColor,
     masterDirection
   );
@@ -158,7 +158,8 @@ function updateLightsFromStateMachine(mappedLights) {
 
 
 function determineStateFromMaster(serverData, masterColor, masterDirection) {
-  if (!serverData) return "ALL_YELLOW";
+
+  if (!Array.isArray(serverData)) return "ALL_YELLOW";
   if (!intersectionStates || !masterDirection) return "ALL_YELLOW";
 
   for (const [stateName, stateObj] of Object.entries(intersectionStates)) {

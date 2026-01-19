@@ -14,19 +14,29 @@ async function read(feIntersectionId) {
 
   const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
   const res = await fetch(url);
-  const data = await res.json();
 
-  if (!data) return null;
+  const response = await res.json();
+  const cleanedResponse = response.data;
 
-  window.serverResponse = data;
+  if (!Array.isArray(cleanedResponse)) {
+    throw new Error("Backend error: response.data is not an array");
+  }
 
-  updateIntersectionStateMachine();
-  return data;
+  window.serverResponse = cleanedResponse;
+
+  updateIntersectionStateMachine(cleanedResponse);
+
+  return { 
+    response, 
+    cleanedResponse 
+  };
 };
 
 
-function updateGridAreasCSSVar(data) {
-  console.log("GRID VAR INPUT:", data);
+function updateGridAreasCSSVar(cleanedResponse) {
+  if (!Array.isArray(cleanedResponse)) {
+    throw new Error("updateGridAreasCSSVar expects cleanedResponse[] array");
+  }
 
   const root = document.documentElement;
 
@@ -37,16 +47,16 @@ function updateGridAreasCSSVar(data) {
     W: false 
   };
 
-  data.forEach(item => {
-    if (!item.CardinalDirection || !item.Tile) return;
+  cleanedResponse.forEach(cleanedResponse => {
+    if (!cleanedResponse.CardinalDirection || !cleanedResponse.Tile) return;
 
-    updated[item.CardinalDirection] = true;
+    updated[cleanedResponse.CardinalDirection] = true;
 
-    switch (item.CardinalDirection) {
-      case "N": root.style.setProperty('--grid-N', item.Tile); break;
-      case "E": root.style.setProperty('--grid-E', item.Tile); break;
-      case "S": root.style.setProperty('--grid-S', item.Tile); break;
-      case "W": root.style.setProperty('--grid-W', item.Tile); break;
+    switch (cleanedResponse.CardinalDirection) {
+      case "N": root.style.setProperty('--grid-N', cleanedResponse.Tile); break;
+      case "E": root.style.setProperty('--grid-E', cleanedResponse.Tile); break;
+      case "S": root.style.setProperty('--grid-S', cleanedResponse.Tile); break;
+      case "W": root.style.setProperty('--grid-W', cleanedResponse.Tile); break;
     }
   });
 
@@ -59,14 +69,14 @@ function updateGridAreasCSSVar(data) {
 }
 
 
-function buildFooriEtapidFromBackend(jsonData) {
+function buildFooriEtapidFromBackend(cleanedResponse) {
 
-  if (!jsonData.data || jsonData.data.length === 0) {
-    console.warn("[FETCH] No cycle data; fallback to single yellow.");
+    if (!Array.isArray(cleanedResponse) || cleanedResponse.length === 0) {
+    console.warn("No cleanedResponse; fallback to yellow");
     return [[0, ["kollane"]]];
   }
 
-  const cycle = jsonData.data[0].CycleData || {};
+  const cycle = cleanedResponse[0].CycleData || {};
 
   const stages = [];
   let current = 0;
@@ -95,19 +105,18 @@ function buildFooriEtapidFromBackend(jsonData) {
   return stages;
 }
 
+function getMasterDirection(cleanedResponse) {
 
-function getMasterDirection(serverData) {
-
-  if (!Array.isArray(serverData) || serverData.length === 0) {
+  if (!Array.isArray(cleanedResponse) || cleanedResponse.length === 0) {
     console.warn("getMasterDirection: no server data");
     return null;
   }
 
-  const main = serverData.find(d => d.IsMainTrafficLight === true);
+  const main = cleanedResponse.find(d => d.IsMainTrafficLight === true);
 
   if (!main) {
     console.warn("No IsMainTrafficLight=true found; falling back to first entry if available");
-    return serverData[0]?.CardinalDirection || null;
+    return cleanedResponse[0]?.CardinalDirection || null;
   }
 
   return main.CardinalDirection || null;
