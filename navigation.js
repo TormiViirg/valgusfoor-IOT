@@ -11,26 +11,27 @@ document.addEventListener('DOMContentLoaded', function () {
   buttons.forEach(btn => {
     btn.addEventListener("click", async () => {
 
-      const match = btn.id.match(/intersection(\d+)/);
-      if (match) window.feIntersectionId = parseInt(match[1], 10);
+        //stopBlinkScheduler();
+        const match = btn.id.match(/intersection(\d+)/);
+        if (match) window.feIntersectionId = parseInt(match[1], 10);
 
-      if (btn.dataset.img) img.src = btn.dataset.img;
+        if (btn.dataset.img) img.src = btn.dataset.img;
 
-      console.log('feIntersectionId =', window.feIntersectionId);
+        console.log('feIntersectionId =', window.feIntersectionId);
 
-      try {
-        const { response, cleanedResponse } = await read(window.feIntersectionId);
+        try {
+            const { response, cleanedResponse } = await read(window.feIntersectionId);
 
-        window.serverResponse = response;
-        window.cleanedResponse = cleanedResponse;
+            window.serverResponse = response;
+            window.cleanedResponse = cleanedResponse;
 
-        updateGridAreasCSSVar(cleanedResponse);
-        window.foorietapid = buildFooriEtapidFromBackend(cleanedResponse);
-        updateIntersectionStateMachine(cleanedResponse);
+            updateGridAreasCSSVar(cleanedResponse);
+            window.foorietapid = buildFooriEtapidFromBackend(cleanedResponse);
+            updateIntersectionStateMachine(cleanedResponse);
 
-      } catch (err) {
-        console.error("Failed to load intersection data:", err);
-      }
+        } catch (err) {
+            console.error("Failed to load intersection data:", err);
+        }
     });
   });
 });

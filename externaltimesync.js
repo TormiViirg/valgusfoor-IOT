@@ -4,6 +4,9 @@ let lastClientTime = null;
 let kestus = 0;
 let foorinihe = 0;
 
+window.getAuthoritativeMs = getAuthoritativeMs;
+
+
 function algusCommon() {
   syncFromServerTime();
   setInterval(syncFromServerTime, 30000);
@@ -38,6 +41,15 @@ function getCurrentTime() {
 
   const elapsed = Date.now() - lastClientTime;
   return new Date(lastServerTime + elapsed);
+}
+
+
+function getAuthoritativeMs() {
+  if (lastServerTime === null || lastClientTime === null) {
+    return Date.now();
+  }
+
+  return lastServerTime + (Date.now() - lastClientTime);
 }
 
 

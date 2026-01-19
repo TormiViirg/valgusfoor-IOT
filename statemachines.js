@@ -194,7 +194,6 @@ function updateIntersectionStateMachine(cleanedResponse) {
 }
 
 
-
 function transition() {
     if (!intersectionStates) {
         currentState = "ALL_YELLOW";
