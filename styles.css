@@ -69,15 +69,15 @@
 
 
 .lamp[data-color="punane"] {
-    background-color: #ff0000;
+    background-color: #cf142b;
 }
 
 .lamp[data-color="kollane"] {
-    background-color: #f2ff00;
+    background-color: #f7b500;
 }
 
 .lamp[data-color="roheline"] {
-    background-color: #22ff00;;
+    background-color: #008754;;
 }
 
 .lamp {

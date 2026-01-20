@@ -6,10 +6,11 @@ const apiLink = "https://script.google.com/macros/s/AKfycbwp347_jkAWND-uTkNvrxgi
 let lightData = [];
 let success = false;
 let time = 0;
-let messages = [];
+let messages = [];  
 const pollInMs = 10000;
 
 async function read(feIntersectionId) {
+
   const url = `${apiLink}?action=read&intersectionID=${feIntersectionId}`;
   const res = await fetch(url);
 
@@ -22,18 +23,43 @@ async function read(feIntersectionId) {
 
   window.serverResponse = cleanedResponse;
 
-  const blinkConfigured = updateBlinkConfig(cleanedResponse);
-  updateIntersectionStateMachine(cleanedResponse);
-
-  if (blinkConfigured) {
-    startBlinkScheduler();
-  }
+  handleIntersectionData(cleanedResponse);
 
   return {
     response,
     cleanedResponse
   };
 }
+
+
+function handleIntersectionData(cleanedResponse) {
+  let blinkConfigured = false;
+
+  if (typeof updateBlinkConfig === "function") {
+    try {
+      blinkConfigured = updateBlinkConfig(cleanedResponse);
+    } catch (e) {
+      console.warn("Blink config failed:", e);
+    }
+  }
+
+  if (typeof updateIntersectionStateMachine === "function") {
+    try {
+      updateIntersectionStateMachine(cleanedResponse);
+    } catch (e) {
+      console.warn("State machine update failed:", e);
+    }
+  }
+
+  if (typeof markSystemReady === "function") {
+    markSystemReady();
+  }
+
+  if (blinkConfigured && typeof startBlinkScheduler === "function") {
+    startBlinkScheduler();
+  }
+}
+
 
 function updateGridAreasCSSVar(cleanedResponse) {
   if (!Array.isArray(cleanedResponse)) {

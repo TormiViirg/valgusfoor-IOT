@@ -1,4 +1,6 @@
 let intersectionStates = null;
+let intersectionType = null; 
+
 const RED = "Red";
 const YELLOW = "Yellow";
 const GREEN = "Green";
@@ -9,6 +11,7 @@ const COLOR_MAP_STATE_TO_DOM = {
   "Yellow": "kollane",
   "Green":  "roheline"
 };
+
 
 const threeWay = {
     ALL_YELLOW: {
@@ -222,21 +225,33 @@ function transition() {
 function detectIntersectionType(cleanedResponse) {
 
     if (!Array.isArray(cleanedResponse)) {
-        return { ALL_YELLOW: twoWay.ALL_YELLOW };
+        intersectionType = "twoWay";
+        return twoWay;
     }
 
-    const directions = cleanedResponse.map(d => d.CardinalDirection);
+    const count = cleanedResponse.length;
 
-    const count = directions.length;
+    if (count === 2) {
+        intersectionType = "twoWay";
+        return twoWay;
+    }
 
-    if (count === 2) return twoWay;
-    if (count === 3) return threeWay;
-    if (count === 4) return fourWay;
+    if (count === 3) {
+        intersectionType = "threeWay";
+        return threeWay;
+    }
+
+    if (count === 4) {
+        intersectionType = "fourWay";
+        return fourWay;
+    }
 
     console.warn("Invalid intersection: entering ALL_YELLOW safety mode");
 
+    intersectionType = "fourWay";
     return { ALL_YELLOW: fourWay.ALL_YELLOW };
 }
+
 
 
 function updateLightsFromStateMachine(mappedLights) {

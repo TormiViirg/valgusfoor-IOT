@@ -3,35 +3,63 @@ window.foorietapid = null;
 window.serverResponse = null;
 window.cleanedResponse = null;
 
+window.__SYSTEM_READY__ = false;
+
+window.whenSystemReady = whenSystemReady;
+
+
+function whenSystemReady(fn) {
+  if (window.__SYSTEM_READY__) {
+    fn();
+    return;
+  }
+
+  const id = setInterval(() => {
+    if (window.__SYSTEM_READY__) {
+      clearInterval(id);
+      fn();
+    }
+  }, 0);
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
 
   const img = document.getElementById("intersectionImg");
   const buttons = document.querySelectorAll("button[data-img]");
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", async () => {
+    buttons.forEach(btn => {
+        btn.addEventListener("click", async () => {
 
-        //stopBlinkScheduler();
-        const match = btn.id.match(/intersection(\d+)/);
-        if (match) window.feIntersectionId = parseInt(match[1], 10);
+            whenSystemReady(() => {
+                if (typeof window.stopBlinkScheduler === "function") {
+                    window.stopBlinkScheduler();
+                }
+            });
 
-        if (btn.dataset.img) img.src = btn.dataset.img;
+            const match = btn.id.match(/intersection(\d+)/);
+            if (match) window.feIntersectionId = parseInt(match[1], 10);
 
-        console.log('feIntersectionId =', window.feIntersectionId);
+            if (btn.dataset.img) img.src = btn.dataset.img;
 
-        try {
-            const { response, cleanedResponse } = await read(window.feIntersectionId);
+            console.log('feIntersectionId =', window.feIntersectionId);
 
-            window.serverResponse = response;
-            window.cleanedResponse = cleanedResponse;
+            try {
+                const { response, cleanedResponse } = await read(window.feIntersectionId);
 
-            updateGridAreasCSSVar(cleanedResponse);
-            window.foorietapid = buildFooriEtapidFromBackend(cleanedResponse);
-            updateIntersectionStateMachine(cleanedResponse);
+                window.serverResponse = response;
+                window.cleanedResponse = cleanedResponse;
 
-        } catch (err) {
-            console.error("Failed to load intersection data:", err);
-        }
+                updateGridAreasCSSVar(cleanedResponse);
+                window.foorietapid = buildFooriEtapidFromBackend(cleanedResponse);
+                updateIntersectionStateMachine(cleanedResponse);
+
+                window.__SYSTEM_READY__ = true;
+                console.log("Core system ready");
+
+            } catch (err) {
+                console.error("Failed to load intersection data:", err);
+            }
+        });
     });
-  });
 });
