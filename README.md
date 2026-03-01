@@ -93,6 +93,9 @@ This project is split into a **virtual UI**, an **admin UI**, and **backend/hard
 - `foorlogic.js` — computes phase, maps master light → state, updates DOM lamp classes.
 - `temporalrules.js` — night blink window evaluation; overrides to `ALL_YELLOW` when active.
 
+<img width="1197" height="946" alt="image" src="https://github.com/user-attachments/assets/ce3a8d71-ceee-4604-ae8b-d519177f11c0" />
+<img width="1200" height="955" alt="image" src="https://github.com/user-attachments/assets/6246a178-1d05-43b9-9f34-2671c26690ef" />
+
 ### Admin UI (AdminLeht)
 - `main.html` — admin page for managing Sheets-backed database (`lights`/`cycles`).
 - `main.js` — admin UI logic: load/save, change tracking.  
@@ -309,6 +312,14 @@ const char* WIFI_SSID = "YourWifi";
 const char* WIFI_PASS = "YourPassword";
 const char* BACKEND_URL = "https://script.google.com/macros/s/XXXX/exec";
 ```
+Physical setup:
+Uses light resistor to measure ambient light in order to dim lights to preserve battery.
+<img width="608" height="472" alt="image" src="https://github.com/user-attachments/assets/4509ab15-c2da-445c-a832-0f9e53f41a7b" />
+How the wires run. Note the lack of power bank and actual arduino instead of node mcu.
+<img width="501" height="269" alt="Screenshot 2026-01-21 221655" src="https://github.com/user-attachments/assets/10795efe-d31a-4dee-beb0-52f1c047044f" />
+For easier bug fixing I added tests to the arduino that can be activated with the keyboard number keys.
+![20260302_014251](https://github.com/user-attachments/assets/b1c2b092-aeac-4e35-b6d3-2180e376d1c4)
+University lab didn't have a propper drill and I really like the red wood and don't want to mess it up :( and the Local RIMI store power bank had faulty soldering so the powerbank couldn't be charged after the demo to the teacher.
 
 ### Notes
 - If the controller clock is off (e.g., timezone drift), ensure your time source/timezone handling is correct
