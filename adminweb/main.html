@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="scripts/main.js" defer></script>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="controlButtons">
+        <div class="actionButtons">
+            <button id="button_add_light">Add Light</button>
+            <button id="button_add_cycle">Add Cycle</button>
+            <button id="print_changes">Print Changes</button>
+        </div>
+        <div class="importantButtons">
+            <button id="load_button" class="btn-green" onclick="load()">Load</button>
+            <button id="save_button" class="btn-green">Save</button>
+        </div>
+    </div>
+    <div class="table">
+        <p>Traffic lights</p>
+        <table id="lights">
+
+        </table>
+    </div>
+    <div class="table">
+        <p>Cycles</p>
+        <table id="cycles"></table>
+    </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# Traffic Light System (Valgusfoori süsteem Eesti keelse versiooni jaoks vaata docs-i) 
+# Traffic Light System (Valgusfoori süsteem)
 
 Web dashboard for controlling and visualizing the operation of a traffic-light hardware system.
 
@@ -15,9 +15,8 @@ A modular prototype for **visualizing and controlling traffic-light intersection
 
 The goal is to build a globally usable open-source traffic light system that can be deployed quickly for temporary traffic control in crisis situations, during roadworks, in the event of technical failures, and in other scenarios where permanent traffic lights are not practical.
 
-To support rapid and modular deployment, the project intentionally avoids centralized servers and specialized hardware. At the same time, operators often need to monitor intersections remotely and in real time. A localhost-only setup was not suitable, and requiring users to deploy and maintain their own always-on server near the device would add unnecessary complexity. Google Sheets was therefore chosen as the persistence layer: it provides Google's uptime, offers a familiar interface for administrators, and avoids the need for a paid domain or separate database hosting.
+To support rapid and modular deployment, the project intentionally avoids centralized servers and specialized hardware. At the same time, operators often need to monitor intersections remotely and in real time. A localhost-only setup was deemed unsuitable, and requiring users to deploy and maintain their own always-on server near the device would add unnecessary complexity. Google Sheets was therefore chosen as the persistence layer: it provides Google's uptime, offers a familiar interface for administrators, and avoids the need for a paid domain or separate database hosting.
 
-For more info or the Estonian version of this document please see the docs.
 ---
 
 ## Table of contents

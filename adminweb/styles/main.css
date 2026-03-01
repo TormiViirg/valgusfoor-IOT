@@ -1,0 +1,145 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f6fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.controlButtons,
+.table {
+    margin-bottom: 30px;
+}
+
+.controlButtons {
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+}
+
+button {
+    background: #4a7afe;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s ease;
+}
+
+button:hover {
+    background: #3a63d6;
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.redButton {
+    background: #ff5c5c;
+}
+
+.redButton:hover {
+    background: #d84b4b;
+}
+
+.btn-green {
+    background: #41c169;
+}
+.btn-green:hover {
+    background: #36a658;
+}
+
+.table {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.table > p {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+tr th {
+    background: #eef1ff;
+    padding: 10px;
+    text-align: center;
+    font-weight: 700;
+    border-bottom: 2px solid #dfe3f7;
+}
+
+table tr {
+    transition: background 0.12s ease;
+}
+
+table tr:hover {
+    background: #f7f8ff;
+}
+
+td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+input,
+select {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #cfd3db;
+    border-radius: 5px;
+    width: 100%;
+    background: white;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #4a7afe;
+    box-shadow: 0 0 0 2px rgba(74, 122, 254, 0.25);
+}
+
+.tileInputContainer {
+    display:flex;
+    gap:6px;
+}
+
+.tileInputContainer input{
+    max-width: 60px;
+}
+
+.input2DContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.ratioInputContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+input[type="range"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.changed {
+    background-color: rgb(255, 254, 168);
+}
+
+.inactive {
+    background-color: gray;
+}

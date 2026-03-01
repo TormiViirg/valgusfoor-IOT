@@ -30,7 +30,8 @@ function syncFromServerTime() {
     })
     .catch(() => {
       // server unreachable → keep running locally
-    });
+    })
+  ;
 }
 
 
