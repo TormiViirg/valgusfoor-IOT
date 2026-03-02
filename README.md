@@ -2,7 +2,7 @@
 
 Web dashboard for controlling and visualizing the operation of a traffic-light hardware system.
 
-A low-footprint CRUD application designed for exceptional traffic management. It does not require a custom domain or a paid database. The system controller applies business logic based on sensor data and settings configured in the admin panel. After installation, the traffic lights configured for an intersection can be monitored through an NTP-synchronized web view.
+A low-footprint CRUD application designed for emergency traffic management. It does not require a custom domain or a paid database. The system controller applies business logic based on sensor data and settings configured in the admin panel. After installation, the traffic lights configured for an intersection can be monitored through an NTP-synchronized web view.
 
 A modular prototype for **visualizing and controlling traffic-light intersections** using:
 - a **web-based virtual traffic light UI** (HTML/CSS/JavaScript),
